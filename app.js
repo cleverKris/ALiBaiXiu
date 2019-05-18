@@ -12,6 +12,8 @@ const bodyParser = require('body-parser');
 const demoRouter = require('./router/demoRouter');
 //引入后台用户管理
 const userRouter = require('./router/usersRouter');
+//引入文章分类
+const categoriesRouter = require('./router/categoriesRouter');
 
 const app = express();
 
@@ -31,6 +33,7 @@ app.use('/static/uploads', express.static('./uploads'));//users的aside.ejs中�
 //使用外置路由
 app.use(demoRouter);
 app.use(userRouter);
+app.use(categoriesRouter);
 
 app.listen(3000, () => {
     console.log('running...');
