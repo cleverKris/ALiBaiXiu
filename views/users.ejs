@@ -46,37 +46,39 @@
                 <form id="tableForm">
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
-                        <tr>
-                            <th class="text-center" width="40"><input type="checkbox" id="checkAll"></th>
-                            <th class="text-center" width="80">头像</th>
-                            <th>邮箱</th>
-                            <th>别名</th>
-                            <th>昵称</th>
-                            <th>状态</th>
-                            <th class="text-center" width="100">操作</th>
-                        </tr>
+                            <tr>
+                                <th class="text-center" width="40"><input type="checkbox" id="checkAll"></th>
+                                <th class="text-center" width="80">头像</th>
+                                <th>邮箱</th>
+                                <th>别名</th>
+                                <th>昵称</th>
+                                <th>状态</th>
+                                <th class="text-center" width="100">操作</th>
+                            </tr>
                         </thead>
                         <tbody id="tbody">
-                        <% for(var i = 0; i < result.length; i++) { %>
-                            <tr>
-                                <td class="text-center"><input class="checkitem" name="id" value="<%= result[i].id %>"
-                                                               type="checkbox">
-                                </td>
-                                <!--使用三元表达式的方法 目的是在没有上传图片的时候 也会有对应替代的默认图片-->
-                                <td class="text-center"><img class="avatar"
-                                                             src="<%= result[i].avatar ? result[i].avatar : '../assets/img/default.png' %>">
-                                </td>
-                                <td><%= result[i].email %></td>
-                                <td><%= result[i].slug %></td>
-                                <td><%= result[i].nickname %></td>
-                                <td>激活</td>
-                                <td class="text-center">
-                                    <a href="post-add.php" id="<%= result[i].id %>"
-                                       class="btn btn-default btn-xs">编辑</a>
-                                    <a href="javascript:;" id="<%= result[i].id %>" class="btn btn-danger btn-xs">删除</a>
-                                </td>
-                            </tr>
-                        <% } %>
+                            <% for(var i = 0; i < result.length; i++) { %>
+                                <tr>
+                                    <td class="text-center"><input class="checkitem" name="id"
+                                                                   value="<%= result[i].id %>"
+                                                                   type="checkbox">
+                                    </td>
+                                    <!--使用三元表达式的方法 目的是在没有上传图片的时候 也会有对应替代的默认图片-->
+                                    <td class="text-center"><img class="avatar"
+                                                                 src="<%= result[i].avatar ? result[i].avatar : '../assets/img/default.png' %>">
+                                    </td>
+                                    <td><%= result[i].email %></td>
+                                    <td><%= result[i].slug %></td>
+                                    <td><%= result[i].nickname %></td>
+                                    <td>激活</td>
+                                    <td class="text-center">
+                                        <a href="post-add.php" id="<%= result[i].id %>"
+                                           class="btn btn-default btn-xs">编辑</a>
+                                        <a href="javascript:;" id="<%= result[i].id %>"
+                                           class="btn btn-danger btn-xs">删除</a>
+                                    </td>
+                                </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </form>
@@ -195,6 +197,9 @@
                     $('#slug').val('');
                     $('#nickname').val('');
                     $('#password').val('');
+                } else if (status === 304) {  //如果返回的status 是 304,说明是isXhrLogin方法在控制器被调用 并且是未进行身份验证 导致调用后 返回值是true
+                    alert(msg);
+                    window.location = '/login';
                 } else {
                     alert(msg);
                 }
@@ -214,6 +219,9 @@
                 if (status === 200) {
                     let html = template('tmp', result);
                     $('#tbody').html(html);
+                } else if (status === 304) {  //如果返回的status 是 304,说明是isXhrLogin方法在控制器被调用 并且是未进行身份验证 导致调用后 返回值是true
+                    alert(msg);
+                    window.location = '/login';
                 } else {
                     alert(msg);
                 }
@@ -242,6 +250,10 @@
 
                         //删除成功后更新数据
                         getAllUsers();
+                    } else if (status === 304) {
+                        //如果返回的status 是 304,说明是isXhrLogin方法在控制器被调用 并且是未进行身份验证 导致调用后 返回值是true
+                        alert(msg);
+                        window.location = '/login';
                     } else {
                         alert(msg);
                     }
@@ -266,6 +278,9 @@
                 if (status === 200) {
                     let html = template('edit', data);
                     $('#form').html(html);
+                } else if (status === 304) {  //如果返回的status 是 304,说明是isXhrLogin方法在控制器被调用 并且是未进行身份验证 导致调用后 返回值是true
+                    alert(msg);
+                    window.location = '/login';
                 } else {
                     alert(msg);
                 }
@@ -295,6 +310,9 @@
                     let html = template('addForm', {});
                     $('#form').html(html);
 
+                } else if (status === 304) {  //如果返回的status 是 304,说明是isXhrLogin方法在控制器被调用 并且是未进行身份验证 导致调用后 返回值是true
+                    alert(msg);
+                    window.location = '/login';
                 } else {
                     alert(msg);
                 }
@@ -354,6 +372,9 @@
 
                     //重新渲染
                     getAllUsers();
+                } else if (status === 304) {  //如果返回的status 是 304,说明是isXhrLogin方法在控制器被调用 并且是未进行身份验证 导致调用后 返回值是true
+                    alert(msg);
+                    window.location = '/login';
                 } else {
                     alert(msg);
                 }

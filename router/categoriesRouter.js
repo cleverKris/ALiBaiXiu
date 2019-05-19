@@ -12,3 +12,5 @@ router.get('/categories', categoriesController.categories) //获取静态页面
     .post('/delCates', categoriesController.delCates); //批量删除
 
 module.exports = router;
+
+

@@ -5,6 +5,11 @@ const usersdb = require('../model/usersdb');
 module.exports = {
     //渲染页面和数据
     getUsers: (request, response) => {
+        //如果是浏览器的主动请求 那么响应的是script标签 浏览器是认识的
+        if (isBrowserLogin(request, response)) {
+            return; //直接返回
+        }
+
         usersdb.query('SELECT * FROM users', (err, result) => {
             if (err) {
                 return response.send('出错了');
@@ -18,6 +23,13 @@ module.exports = {
     },
     //添加用户数据
     postAddUsers: (request, response) => {
+        //如果是ajax请求 那么是不认识script标签的 那么返回的是 isXhrLogin方法中 在没有身份验证的情况下 返回的是true
+        //条件成立  返回的是 {status: 304,msg: '还没有登录'}
+        if (isXhrLogin(request, response)) {
+            return;
+        }
+
+
         //接收参数 使用body-parser
         //执行sql语句
         let addSql = `INSERT INTO users (slug,email,password,nickname,status) VALUES ('${request.body.slug}','${request.body.email}','${request.body.password}','${request.body.nickname}','activated')`;
@@ -36,6 +48,12 @@ module.exports = {
     },
     //渲染所有用户的列表信息
     getAllUsers: (request, response) => {
+        //如果是ajax请求 那么是不认识script标签的 那么返回的是 isXhrLogin方法中 在没有身份验证的情况下 返回的是true
+        //条件成立  返回的是 {status: 304,msg: '还没有登录'}
+        if (isXhrLogin(request, response)) {
+            return;
+        }
+
         let allSql = `SELECT * FROM users`;
         //此时query方法中的回调函数 应该有两个参数 一个是err  一个是result
         usersdb.query(allSql, (err, result) => {
@@ -56,6 +74,12 @@ module.exports = {
     },
     //删除指定的用户数据
     delUser: (request, response) => {
+        //如果是ajax请求 那么是不认识script标签的 那么返回的是 isXhrLogin方法中 在没有身份验证的情况下 返回的是true
+        //条件成立  返回的是 {status: 304,msg: '还没有登录'}
+        if (isXhrLogin(request, response)) {
+            return;
+        }
+
         //获取参数
         let id = request.query.id;
         //执行sql语句
@@ -75,6 +99,12 @@ module.exports = {
     },
     //获取修改对应的用户
     getEdituser: (request, response) => {
+        //如果是ajax请求 那么是不认识script标签的 那么返回的是 isXhrLogin方法中 在没有身份验证的情况下 返回的是true
+        //条件成立  返回的是 {status: 304,msg: '还没有登录'}
+        if (isXhrLogin(request, response)) {
+            return;
+        }
+
         let id = request.query.id;
 
         let editSql = `SELECT * FROM users WHERE id=${id}`;
@@ -96,6 +126,12 @@ module.exports = {
     },
     //修改用户信息
     postEditUser: (request, response) => {
+        //如果是ajax请求 那么是不认识script标签的 那么返回的是 isXhrLogin方法中 在没有身份验证的情况下 返回的是true
+        //条件成立  返回的是 {status: 304,msg: '还没有登录'}
+        if (isXhrLogin(request, response)) {
+            return;
+        }
+
         //接收参数
         // console.log(request.body);
 
@@ -115,6 +151,12 @@ module.exports = {
     },
     //批量删除
     delUsers: (request, response) => {
+        //如果是ajax请求 那么是不认识script标签的 那么返回的是 isXhrLogin方法中 在没有身份验证的情况下 返回的是true
+        //条件成立  返回的是 {status: 304,msg: '还没有登录'}
+        if (isXhrLogin(request, response)) {
+            return;
+        }
+
         //post请求 参数放在请求体中
         //console.log(request.body); //{ id: [ '16', '17' ] }
         let ids = request.body.id.join(','); //16,17
@@ -136,3 +178,34 @@ module.exports = {
 
     }
 };
+
+//验证是否有进行身份验证
+/**
+ * 属于异步对象的请求的响应
+ * @param request
+ * @param response
+ * @return {boolean}
+ */
+function isXhrLogin(request, response) {
+    if (!request.session.obj) {
+        response.send({
+            status: 304,
+            msg: '还没有登录'
+        });
+        return true;//是true 说明没有登录
+    }
+    return false;//是false 说明已经登录了
+}
+
+/**
+ * 属于浏览器的请求的响应
+ * @param request
+ * @param response
+ * @return {*}
+ */
+function isBrowserLogin(request, response) {
+    if (!request.session.obj) {
+        return response.send(`<script>alert('还没有登录');window.location='/login';</script>`);
+    }
+
+}

@@ -5,6 +5,17 @@ const usersRouter = express();
 //引入对应的逻辑代码
 const usersController = require('../controller/usersController');
 
+
+//身份验证的中间件
+// usersRouter.use((request, response, next) => {
+//     //验证是否登录
+//     if (request.session.obj) {
+//         next();
+//     } else {
+//         response.send(`<script>alert('您还有没登录');window.location='/login';</script>`);
+//     }
+// });
+
 //使用链式编程:
 usersRouter.get('/users', usersController.getUsers) //渲染用户页面
     .post('/postAddUsers', usersController.postAddUsers) //添加用户数据

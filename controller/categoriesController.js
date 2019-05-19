@@ -8,7 +8,8 @@ module.exports = {
     },
     //重新渲染所有文章数据
     categoriesData: (request, response) => {
-        categoriesdb.query('SELECT * FROM categories', (err, result) => {
+        //request.body 是一个对象
+        categoriesdb.categoriesData((err, result) => {
             if (err) {
                 return response.send('出错了');
             }
@@ -22,9 +23,7 @@ module.exports = {
     //删除对应的文章分类目录
     delCate: (request, response) => {
         //获取参数
-        let id = request.query.id;
-        //执行sql语句
-        categoriesdb.query(`DELETE FROM categories WHERE id=${id}`, (err, result) => {
+        categoriesdb.delCate(request.query.id, (err, result) => {
             if (err) {
                 return response.send({
                     status: 400,
@@ -39,9 +38,7 @@ module.exports = {
     },
     //添加文章分类
     addCate: (request, response) => {
-        //获取参数
-        let addSql = `INSERT INTO categories (name,slug) VALUES ('${request.body.name}','${request.body.slug}')`;
-        categoriesdb.query(addSql, (err, result) => {
+        categoriesdb.addCate(request.body, (err, result) => {
             if (err) {
                 return response.send({
                     status: 400,
@@ -57,8 +54,7 @@ module.exports = {
     //编辑渲染对应的分类信息
     getEditCate: (request, response) => {
         //获取参数
-        let id = request.query.id;
-        categoriesdb.query(`SELECT * FROM categories WHERE id = ${id}`, (err, result) => {
+        categoriesdb.getEditCate(request.query.id, (err, result) => {
             if (err) {
                 return response.send({
                     status: 400,
@@ -75,8 +71,7 @@ module.exports = {
     },
     //修改对应的文章分类
     editCate: (request, response) => {
-        let editSql = `UPDATE categories SET name='${request.body.name}',slug='${request.body.slug}' WHERE id = ${request.body.id}`;
-        categoriesdb.query(editSql, (err, result) => {
+        categoriesdb.editCate(request.body, (err, result) => {
             if (err) {
                 return response.send({
                     status: 400,
@@ -94,8 +89,7 @@ module.exports = {
         //console.log(request.body); //{ id: [ '4', '18' ] }
         let ids = request.body.id.join(',');  //4,18
 
-        //执行sql语句
-        categoriesdb.query(`DELETE FROM categories WHERE id in(${ids})`, (err, result) => {
+        categoriesdb.delCates(ids, (err, result) => {
             if (err) {
                 response.send({
                     status: 400,
@@ -107,5 +101,7 @@ module.exports = {
                 msg: '批量删除成功'
             });
         });
+
+
     }
 };
