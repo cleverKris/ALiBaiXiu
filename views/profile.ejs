@@ -1,0 +1,124 @@
+<% include usersLayout/header.ejs %>
+
+<div class="main">
+    <% include usersLayout/nav.ejs %>
+    <div class="container-fluid">
+        <div class="page-title">
+            <h1>我的个人资料</h1>
+        </div>
+        <!-- 有错误信息时展示 -->
+        <!-- <div class="alert alert-danger">
+          <strong>错误！</strong>发生XXX错误
+        </div> -->
+        <form class="form-horizontal">
+            <input type="hidden" id="id" value="<%= id %>">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">头像</label>
+                <div class="col-sm-6">
+                    <label class="form-image">
+                        <input id="avatar" type="file">
+                        <!--图片预览的位置-->
+                        <img id="avatarImg" src="<%= avatar %>">
+                        <i class="mask fa fa-upload"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="col-sm-3 control-label">邮箱</label>
+                <div class="col-sm-6">
+                    <input id="email" class="form-control" name="email" type="type" value="<%= email %>"
+                           placeholder="邮箱"
+                           readonly>
+                    <p class="help-block">登录邮箱不允许修改</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="slug" class="col-sm-3 control-label">别名</label>
+                <div class="col-sm-6">
+                    <input id="slug" class="form-control" name="slug" type="type" value="<%= slug %>"
+                           placeholder="slug">
+                    <p class="help-block">https://zce.me/author/<strong>zce</strong></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nickname" class="col-sm-3 control-label">昵称</label>
+                <div class="col-sm-6">
+                    <input id="nickname" class="form-control" name="nickname" type="type" value="<%= nickname %>"
+                           placeholder="昵称">
+                    <p class="help-block">限制在 2-16 个字符</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bio" class="col-sm-3 control-label">简介</label>
+                <div class="col-sm-6">
+                    <textarea id="bio" class="form-control" placeholder="Bio" cols="30"
+                              rows="6"><%= bio %></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <button id="update" type="submit" class="btn btn-primary">更新</button>
+                    <a class="btn btn-link" href="password-reset.html">修改密码</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<% include usersLayout/aside.ejs %>
+<% include usersLayout/footer.ejs %>
+
+<script>
+    //1.完成图片预览 change事件
+    $('#avatar').change(() => {
+        // console.log($('#avatar')[0].files[0]); //得到图片对象
+
+        //将图片对象转为一个内存地址
+        let imgUrl = URL.createObjectURL($('#avatar')[0].files[0]);
+
+        $('#avatarImg').attr('src', imgUrl);
+    });
+
+
+    //2.为更新按钮绑定一个点击事件
+    $('#update').on('click', (e) => {
+        //阻止默认行为
+        e.preventDefault();
+
+        let fd = new FormData();
+
+
+        //1.判断是否有上传新图片 要是没有上传图片 结果为undefined
+        // console.log($('#avatar')[0].files[0]);
+        if ($('#avatar')[0].files[0]) {
+            fd.append('avatar', $('#avatar')[0].files[0]);
+        } else {
+            fd.append('avatar', $('#avatarImg').attr('src'));
+        }
+
+        fd.append('id', $('#id').val());
+        fd.append('slug', $('#slug').val());
+        fd.append('nickname', $('#nickname').val());
+        fd.append('bio', $('#bio').val());
+
+        //接收参数(包含文件)
+        $.ajax({
+            url: '/updateProfile',
+            method: 'post',
+            data: fd,
+            processData: false, //不要处理请求的参数
+            contentType: false,//不要设置请求头
+            success: result => {
+                let {status, msg} = result;
+                if (status === 200) {
+                    alert(msg);
+
+                    //跳转到 users
+                    window.location = '/users';
+                } else {
+                    alert(msg);
+                }
+            }
+        })
+
+    });
+</script>

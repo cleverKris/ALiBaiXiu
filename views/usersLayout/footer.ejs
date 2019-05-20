@@ -5,3 +5,23 @@
 <script>NProgress.done()</script>
 </body>
 </html>
+
+<script>
+    $('#loginout').on('click', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/loginout',
+            method: 'get',
+            success: result => {
+                let {status, msg} = result;
+                if (status === 200) {
+                    alert(msg);
+
+                    //成功退出后 跳转到/login
+                    window.location = '/login';
+                }
+            }
+        })
+    });
+
+</script>

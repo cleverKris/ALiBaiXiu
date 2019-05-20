@@ -1,5 +1,7 @@
 //引入users页面需要的数据 usersdb.js
 const usersdb = require('../model/usersdb');
+const formidable = require('formidable');
+const path = require('path');
 
 //渲染静态页面
 module.exports = {
@@ -17,7 +19,9 @@ module.exports = {
 
             //调用ejs中的render方法
             response.render('users', {
-                result: result //查询时,返回的是一个数组 [RowDataPacket{},RowDataPacket{}]
+                result: result, //查询时,返回的是一个数组 [RowDataPacket{},RowDataPacket{}]
+                nickname: request.session.users.nickname,
+                avatar: request.session.users.avatar
             });
         })
     },
@@ -135,7 +139,7 @@ module.exports = {
         //接收参数
         // console.log(request.body);
 
-        let editUserSql = `UPDATE user SET email='${request.body.email}',nickname='${request.body.nickname}',password='${request.body.password}' WHERE id = ${request.body.id}`;
+        let editUserSql = `UPDATE users SET email='${request.body.email}',nickname='${request.body.nickname}',password='${request.body.password}' WHERE id = ${request.body.id}`;
         usersdb.query(editUserSql, (err, result) => {
             if (err) {
                 return response.send({
@@ -176,6 +180,71 @@ module.exports = {
             });
         })
 
+    },
+    //响应个人中心页面
+    profile: (request, response) => {
+        //得到当前登录的用户的id
+        let id = request.session.users.id;
+        ///console.log(id) //在session中保存着
+        usersdb.profile(id, (err, result) => {
+            if (err) {
+                //如果出错了 则跳转回users页面
+                return response.send(`<script>alert('出错啦');window.location='/users';</script>`);
+            }
+            //result : [  {}  ]
+            response.render('profile', result[0]);
+        })
+
+    },
+    //添加一个修改个人信息的路由
+    updateProfile: (request, response) => {
+        //接收参数 使用formidable
+        let form = new formidable.IncomingForm();
+
+        //修改图片上传后保存的路径
+        let imgPath = path.join(__dirname, '../uploads');
+        form.uploadDir = imgPath;
+
+        //保留图片后缀
+        form.keepExtensions = true;
+
+        form.parse(request, (err, fields, files) => { //fields:请求的参数    files:请求的文件
+            if (err) {
+                return response.send({
+                    status: 400,
+                    msg: '修改失败'
+                })
+            }
+
+            // console.log(fields);
+            // console.log(files); //没有上传新图片的话 接收到的是空对象{}
+            //判断是否有上传新图片:
+            console.log(files.avatar);
+            if (files.avatar) {  //如果有上传新图片
+                let name = path.basename(files.avatar.path);
+                //files.avatar.path: (这是被上面修改过的路径,已经将临时保存地址修改为了当前项目的uploads目录下)'D:\\黑马前端33期就业班\\阿里百秀\\阿里百秀5-2第4天\\ALiBaiXiu\\uploads\\upload_4e4e80d4928deea38a652cd2a8b1bff0.jpg',
+                //path.basename:取得是 upload_4e4e80d4928deea38a652cd2a8b1bff0.jpg  这样可以解决一个问题:将之前的图片全部仍然保留在此路径 避免静态页面渲染失败 但是新添加的图片的名字不会和之前的图片的名字有冲突
+                fields.avatar = '/static/uploads/' + name;
+            }
+
+            //当修改了个人信息中的图片和昵称后 需要将session 中的信息进行更新
+            request.session.users.nickname = fields.nickname;
+            request.session.users.avatar = fields.avatar;
+
+            usersdb.updateProfile(fields, (err1, result) => {
+                if (err1) {
+                    return response.send({
+                        status: 400,
+                        msg: '修改失败'
+                    })
+                }
+                response.send({
+                    status: 200,
+                    msg: '修改成功'
+                })
+            });
+        })
+
     }
 };
 
@@ -187,7 +256,7 @@ module.exports = {
  * @return {boolean}
  */
 function isXhrLogin(request, response) {
-    if (!request.session.obj) {
+    if (!request.session.users) {
         response.send({
             status: 304,
             msg: '还没有登录'
@@ -204,7 +273,7 @@ function isXhrLogin(request, response) {
  * @return {*}
  */
 function isBrowserLogin(request, response) {
-    if (!request.session.obj) {
+    if (!request.session.users) {
         return response.send(`<script>alert('还没有登录');window.location='/login';</script>`);
     }
 

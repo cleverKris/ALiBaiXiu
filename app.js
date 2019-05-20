@@ -16,6 +16,8 @@ const userRouter = require('./router/usersRouter');
 const categoriesRouter = require('./router/categoriesRouter');
 //引入登录页面
 const loginRouter = require('./router/loginRouter');
+//引入文章页面
+const articleRouter = require('./router/articleRouter');
 
 const app = express();
 
@@ -42,6 +44,7 @@ app.use('/static/uploads', express.static('./uploads'));//users的aside.ejs中�
 app.use(loginRouter);
 app.use(userRouter);
 app.use(categoriesRouter);
+app.use(articleRouter);
 
 
 app.listen(3000, () => {

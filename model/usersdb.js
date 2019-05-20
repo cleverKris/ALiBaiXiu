@@ -1,7 +1,21 @@
 const db = require('./db');
 
 module.exports = {
-    query: db.query
+    query: db.query,
+    //响应个人中心页面
+    profile: (id, callback) => {
+        db.query(`SELECT * FROM users WHERE id = ${id}`, (err, result) => {
+            callback(err, result);
+        })
+    },
+    //修改个人信息
+    //更新个人信息:别名 昵称 图片 说明
+    updateProfile: (obj, callback) => {
+        let updateSql = `UPDATE users SET slug='${obj.slug}',nickname='${obj.nickname}',bio='${obj.bio}',avatar='${obj.avatar}' WHERE id = ${obj.id}`;
+        db.query(updateSql, (err, result) => {
+            callback(err, result);
+        })
+    }
 };
 
 // const mysql = require('mysql');

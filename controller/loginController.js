@@ -37,14 +37,32 @@ module.exports = {
 
             //登录成功
             //将登录的信息保存到session中
-            request.session.obj = {
+            request.session.users = {
                 email: request.body.email,
-                password: request.body.password
+                password: request.body.password,
+                nickname: result[0].nickname,
+                id: result[0].id,
+                avatar: result[0].avatar
             };
+            //console.log(request.session.users);
+            /*
+            * { email: '751359974@qq.com',
+                  password: '123',
+                  nickname: 'kxs',
+                  id: 14 }
+            * */
             response.send({
                 status: 200,
                 msg: '登录成功'
             })
+        })
+    },
+    //退出登录
+    loginout: (request, response) => {
+        request.session.users = null;
+        response.send({
+            status: 200,
+            msg: '退出成功'
         })
     }
 };

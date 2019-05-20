@@ -4,7 +4,11 @@ const categoriesdb = require('../model/categoriesdb');
 module.exports = {
     //获取静态页面
     categories: (request, response) => {
-        response.render('categories', {});
+        //传入nickname
+        response.render('categories', {
+            nickname: request.session.users.nickname,
+            avatar: request.session.users.avatar
+        });
     },
     //重新渲染所有文章数据
     categoriesData: (request, response) => {
