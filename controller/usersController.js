@@ -245,6 +245,60 @@ module.exports = {
             });
         })
 
+    },
+    //响应修改密码的页面
+    getPwdReset: (request, response) => {
+        if (isBrowserLogin(request, response)) {
+            return;
+        }
+        response.render('password-reset', {
+            nickname: request.session.users.nickname,
+            avatar: request.session.users.avatar
+        })
+    },
+    //修改密码
+    resetPwd: (request, response) => {
+        //获取当前session中的密码(这样可以不用操作数据库 直接与session中对比)
+        //console.log(request.session.users.password);
+
+        //接收参数
+        //用户输入的旧密码:
+        let old = request.body.old;
+        //新密码:
+        let newPwd = request.body.new;
+        //获取到当前需要修改的是哪个用户的密码
+        //console.log(request.session.users.id);
+
+        //将旧密码与session中存放的密码进行判断
+        if (old != request.session.users.password) {
+            return response.send({
+                status: 400,
+                msg: '您输入的旧密码有误'
+            })
+        } else {
+            //将新密码更新到session中
+            //request.session.users.password = newPwd;
+            //其实好像也没必要保存 因为修改成功后会重新登录 那个时候又会对session中的数据进行重新赋值
+
+
+            //输入的旧密码正确, 可以修改为新密码
+            usersdb.resetPwd(request.session.users.id, newPwd, (err, result) => {
+                if (err) {
+                    return response.send({
+                        status: 401,
+                        msg: '修改失败'
+                    })
+                }
+                //解决bug:修改密码成功之后,再次访问别的页面 是可以访问成功的 所以需要清除当前的session
+                request.session.users = null;
+                response.send({
+                    status: 200,
+                    msg: '修改密码成功，请重新登录'
+                })
+            });
+
+
+        }
     }
 };
 
@@ -274,6 +328,7 @@ function isXhrLogin(request, response) {
  */
 function isBrowserLogin(request, response) {
     if (!request.session.users) {
+        //return .. 后的 在布尔类型中是true
         return response.send(`<script>alert('还没有登录');window.location='/login';</script>`);
     }
 

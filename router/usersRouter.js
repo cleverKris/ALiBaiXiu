@@ -26,5 +26,7 @@ usersRouter.get('/users', usersController.getUsers) //渲染用户页面
     .post('/delUsers', usersController.delUsers) //批量删除
     .get('/profile', usersController.profile) //响应个人中心页面
     .post('/updateProfile', usersController.updateProfile) //添加一个修改个人信息的路由
+    .get('/password-reset', usersController.getPwdReset) //响应修改密码页面
+    .post('/resetPwd', usersController.resetPwd)   //修改密码
 
 module.exports = usersRouter;

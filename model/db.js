@@ -4,7 +4,9 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'alibaixiu'
+    database: 'alibaixiu',
+    //允许mysql第三方包 同时执行多条sql语句
+    multipleStatements: true
 });
 
 //用户连接

@@ -15,6 +15,13 @@ module.exports = {
         db.query(updateSql, (err, result) => {
             callback(err, result);
         })
+    },
+    //修改密码
+    resetPwd: (id, newPwd, callback) => {
+        let resetSql = `UPDATE users SET password = '${newPwd}' WHERE id = ${id}`;
+        db.query(resetSql, (err, result) => {
+            callback(err, result);
+        })
     }
 };
 
