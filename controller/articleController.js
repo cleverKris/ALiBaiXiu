@@ -138,5 +138,66 @@ module.exports = {
                 msg: '删除成功'
             })
         })
+    },
+    //渲染编辑文章的静态页面
+    getpostEdit: (request, response) => {
+        response.render('post-edit', {
+            nickname: request.session.users.nickname,
+            avatar: request.session.users.avatar
+        })
+    },
+    //渲染编辑文章数据信息
+    getEditDataById: (request, response) => {
+        let id = request.query.id;
+
+        articledb.getEditDataById(id, (err, result) => {
+            if (err) {
+                return response.send({
+                    status: 400,
+                    msg: '出错啦'
+                })
+            }
+            response.send({
+                status: 200,
+                msg: '数据获取成功',
+                data: result[0][0],
+                cateData: result[1]
+            })
+        })
+    },
+    //修改文章信息
+    updatePostsData: (request, response) => {
+        let form = new formidable.IncomingForm();
+        //设置保存的路径
+        form.uploadDir = path.join(__dirname, '../uploads');
+        //保留后缀名
+        form.keepExtensions = true;
+
+        form.parse(request, (err, fields, files) => {
+            if (err) {
+                return response.send({
+                    status: 400,
+                    msg: '出错啦'
+                })
+            }
+            //如果上传了图片
+            if (files.feature) {
+                fields.feature = '/static/uploads/' + path.basename(files.feature.path);
+            }
+            articledb.updatePostsData(fields, (err1, result) => {
+                if (err1) {
+                    return response.send({
+                        status: 400,
+                        msg: '出错啦'
+                    })
+                }
+                response.send({
+                    status: 200,
+                    msg: '修改成功'
+                })
+            })
+
+
+        })
     }
 };

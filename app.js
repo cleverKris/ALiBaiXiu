@@ -18,6 +18,8 @@ const categoriesRouter = require('./router/categoriesRouter');
 const loginRouter = require('./router/loginRouter');
 //引入文章页面
 const articleRouter = require('./router/articleRouter');
+//引入设置菜单
+const setRouter = require('./router/setRouter');
 
 const app = express();
 
@@ -40,11 +42,15 @@ app.use(cookieSession({
 app.use('/assets', express.static('./assets'));//users的header.ejs中需要的文件
 app.use('/static/uploads', express.static('./uploads'));//users的aside.ejs中需要的图片
 
+//前台页面的静态资源
+app.use(express.static('./public'));
+
 //使用外置路由
 app.use(loginRouter);
 app.use(userRouter);
 app.use(categoriesRouter);
 app.use(articleRouter);
+app.use(setRouter);
 
 
 app.listen(3000, () => {

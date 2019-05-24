@@ -9,5 +9,8 @@ router.get('/post-add', articleController.getPostadd) //渲染写文章的静态
     .get('/getPostsData', articleController.getPostsData) //查询posts表中的所有的数据
     .get('/delArticle', articleController.delArticle) //删除文章
     .post('/delArticles', articleController.delArticles) //批量删除文章
+    .get('/post-edit', articleController.getpostEdit) //渲染编辑文章的静态页面
+    .get('/getEditDataById', articleController.getEditDataById) //渲染当前需要编辑文章的信息
+    .post('/updatePostsData', articleController.updatePostsData) //修改文章信息
 
 module.exports = router;

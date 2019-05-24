@@ -77,5 +77,20 @@ module.exports = {
         db.query(`DELETE FROM posts WHERE id in (${ids})`, (err, result) => {
             callback(err, result);
         })
+    },
+    //当前需要编辑的文章
+    getEditDataById: (id, callback) => {
+        //不但要渲染文章的数据 还要渲染分类中的内容
+        let sql = `SELECT * FROM posts WHERE id = ${id};SELECT * FROM categories`;
+        db.query(sql, (err, result) => {
+            callback(err, result);
+        })
+    },
+    //修改文章
+    updatePostsData: (obj, callback) => {
+        let sql = `UPDATE posts SET title = '${obj.title}',content = '${obj.content}',slug = '${obj.slug}',category_id = ${obj.category},created = '${obj.created}',status = '${obj.status}',feature = '${obj.feature}' WHERE id = ${obj.id} `;
+        db.query(sql, (err, result) => {
+            callback(err, result);
+        })
     }
 };

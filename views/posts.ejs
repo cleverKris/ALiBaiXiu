@@ -84,7 +84,8 @@
 
 
         <td class="text-center">
-            <a href="javascript:;" class="btn btn-default btn-xs">编辑</a>
+            <!--编辑文章页面的跳转 带上id-->
+            <a href="/post-edit?id={{ $value.id }}" class="btn btn-default btn-xs">编辑</a>
             <a href="javascript:;" id="{{ $value.id }}" class="btn btn-danger btn-xs">删除</a>
         </td>
     </tr>
@@ -128,14 +129,12 @@
                     //符合筛选条件的总数
                     let total = result.data[1][0]['count(*)'];
                     // console.log(total);
-
                     initPage(total, pageSize);
                 } else {
                     alert(msg);
                 }
             }
         })
-
     }
 
     //初始化分页方法
@@ -149,8 +148,6 @@
             last: '末页',
             prev: '上一页',
             next: '下一页',
-
-
             /**点击页码时触发
              * @param event
              * @param page 就是当前的页数
@@ -171,8 +168,6 @@
 
         //点击时调用方法
         getPostsData(1, 30);
-
-
     });
 
 
