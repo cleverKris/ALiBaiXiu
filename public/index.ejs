@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>阿里百秀-发现生活，发现美!</title>
+    <title><%= data[1]['value'] %></title>
+    <meta name="description"
+          content="<%= data[2]['value'] %>"/>
+    <meta name="keywords" content="<%= data[3]['value'] %>"/>
+
+
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.css">
 </head>
@@ -18,7 +23,7 @@
             </ul>
         </div>
         <div class="header">
-            <h1 class="logo"><a href="index.html"><img src="assets/img/logo.png" alt=""></a></h1>
+            <h1 class="logo"><a href="index.html"><img src="<%= data[0]['value'] %>" alt=""></a></h1>
             <!--侧边导航栏-->
             <ul class="nav">
                 <li><a href="javascript:;"><i></i>导航栏正在获取中...</a></li>
@@ -388,7 +393,7 @@
             </div>
         </div>
         <div class="footer">
-            <p>© 2016 XIU主题演示 本站主题由 themebetter 提供</p>
+            <p><%= data[4]['value'] %></p>
         </div>
     </div>
     <script src="assets/vendors/jquery/jquery.js"></script>

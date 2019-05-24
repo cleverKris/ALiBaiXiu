@@ -92,5 +92,16 @@ module.exports = {
         db.query(sql, (err, result) => {
             callback(err, result);
         })
+    },
+    //动态渲染站点内容统计
+    getTotalData: callback => {
+        let sql = `SELECT count(*) FROM posts;
+                    SELECT count(*) FROM posts WHERE posts.status = 'drafted';
+                    SELECT count(*) FROM categories;
+                    SELECT count(*) FROM comments;
+                    SELECT count(*) FROM comments WHERE comments.status = 'held'`;
+        db.query(sql, (err, result) => {
+            callback(err, result);
+        })
     }
 };

@@ -20,12 +20,15 @@ const loginRouter = require('./router/loginRouter');
 const articleRouter = require('./router/articleRouter');
 //引入设置菜单
 const setRouter = require('./router/setRouter');
+//引入index相关路由
+const indexRouter = require('./router/indexRouter');
 
 const app = express();
 
 
 //配置ejs模板引擎
-app.set('views', './views'); //设置模板引擎的静态页面
+app.set('views', './views'); //设置模板引擎的静态页面(后台)
+app.set('views', './public'); //设置模板引擎的静态页面(前台)
 app.set('view engine', 'ejs');//设置模板引擎渲染的文件的后缀名
 
 //配置bodyParser
@@ -51,7 +54,7 @@ app.use(userRouter);
 app.use(categoriesRouter);
 app.use(articleRouter);
 app.use(setRouter);
-
+app.use(indexRouter);
 
 app.listen(3000, () => {
     console.log('running...');

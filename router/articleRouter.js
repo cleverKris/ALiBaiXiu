@@ -12,5 +12,7 @@ router.get('/post-add', articleController.getPostadd) //渲染写文章的静态
     .get('/post-edit', articleController.getpostEdit) //渲染编辑文章的静态页面
     .get('/getEditDataById', articleController.getEditDataById) //渲染当前需要编辑文章的信息
     .post('/updatePostsData', articleController.updatePostsData) //修改文章信息
+    .get('/bg-index', articleController.getBgindex) //渲染仪表盘的静态页面
+    .get('/getTotalData', articleController.getTotalData)  //动态渲染站点内容统计
 
 module.exports = router;

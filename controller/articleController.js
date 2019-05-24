@@ -167,6 +167,11 @@ module.exports = {
     },
     //修改文章信息
     updatePostsData: (request, response) => {
+        if (isXhrLogin(request, response)) {
+            return;
+        }
+
+
         let form = new formidable.IncomingForm();
         //设置保存的路径
         form.uploadDir = path.join(__dirname, '../uploads');
@@ -199,5 +204,68 @@ module.exports = {
 
 
         })
+    },
+    //渲染仪表盘静态页面
+    getBgindex: (request, response) => {
+        if (isBrowserLogin(request, response)) {
+            return
+        }
+        response.render('bg-index', {
+            nickname: request.session.users.nickname,
+            avatar: request.session.users.avatar
+        })
+    },
+    //动态渲染站点内容统计
+    getTotalData: (request, response) => {
+        if (isXhrLogin(request, response)) {
+            return;
+        }
+
+        articledb.getTotalData((err, result) => {
+            if (err) {
+                return response.send({
+                    status: 400,
+                    msg: '出错啦'
+                })
+            }
+            response.send({
+                status: 200,
+                msg: '获取数据成功',
+                data: result
+            })
+        })
     }
 };
+
+
+//验证是否有进行身份验证
+/**
+ * 属于异步对象的请求的响应
+ * @param request
+ * @param response
+ * @return {boolean}
+ */
+function isXhrLogin(request, response) {
+    if (!request.session.users) {
+        response.send({
+            status: 304,
+            msg: '还没有登录'
+        });
+        return true;//是true 说明没有登录
+    }
+    return false;//是false 说明已经登录了
+}
+
+/**
+ * 属于浏览器的请求的响应
+ * @param request
+ * @param response
+ * @return {*}
+ */
+function isBrowserLogin(request, response) {
+    if (!request.session.users) {
+        //return .. 后的 在布尔类型中是true
+        return response.send(`<script>alert('还没有登录');window.location='/login';</script>`);
+    }
+
+}

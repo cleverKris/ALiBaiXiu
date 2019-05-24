@@ -49,7 +49,8 @@
             <label for="category">所属分类</label>
             <select id="category" class="form-control" name="category">
                 {{ each cateData }}
-                <option {{ data.category_id=== $value.id ? 'selected' : '' }} value="{{ $value.id }}">{{ $value.name }}</option>
+                <option {{ data.category_id=== $value.id ?
+                'selected' : '' }} value="{{ $value.id }}">{{ $value.name }}</option>
                 {{ /each }}
 
             </select>
@@ -130,6 +131,9 @@
                     alert(msg);
 
                     window.location = '/posts';
+                } else if (status === 304) {
+                    alert(msg);
+                    window.location = '/login';
                 } else {
                     alert(msg);
                 }

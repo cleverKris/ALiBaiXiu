@@ -1,0 +1,64 @@
+<% include usersLayout/header.ejs %>
+
+<div class="main">
+    <% include usersLayout/nav.ejs %>
+    <div class="container-fluid">
+        <div class="jumbotron text-center">
+            <h1>One Belt, One Road</h1>
+            <p>Thoughts, stories and ideas.</p>
+            <p><a class="btn btn-primary btn-lg" href="/post-add" role="button">写文章</a></p>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">站点内容统计：</h3>
+                    </div>
+                    <ul class="list-group">
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+</div>
+
+<% include usersLayout/aside.ejs %>
+<% include usersLayout/footer.ejs %>
+
+<script id="tmp" type="text/html">
+    <li class="list-group-item"><strong>{{ posts }}</strong>篇文章（<strong>{{ drafted }}</strong>篇草稿）</li>
+    <li class="list-group-item"><strong>{{ cate }}</strong>个分类</li>
+    <li class="list-group-item"><strong>{{ comment }}</strong>条评论（<strong>{{ held }}</strong>条待审核）</li>
+</script>
+
+<script>
+    //动态渲染站点内容统计
+    let ajax = $.ajax({
+        url: '/getTotalData'
+    });
+    ajax.then(result => {
+        let {status, msg, data} = result;
+        console.log(data);
+
+        let obj = {
+            posts: data[0][0]['count(*)'],
+            drafted: data[1][0]['count(*)'],
+            cate: data[2][0]['count(*)'],
+            comment: data[3][0]['count(*)'],
+            held: data[4][0]['count(*)'],
+        }
+        if (status === 200) {
+            let html = template('tmp', obj);
+            $('ul.list-group').html(html);
+
+        } else if (status === 304) {
+            alert(msg)
+            window.location = '/login';
+        } else {
+            alert(msg);
+        }
+    });
+</script>
